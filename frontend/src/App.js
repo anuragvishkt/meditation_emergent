@@ -6,172 +6,108 @@ import './App.css';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
-// Voice Personas
-const VOICE_PERSONAS = {
-  "calm_female": {
-    "name": "Serene Sarah",
-    "description": "Calm and nurturing female voice",
-    "color": "from-purple-400 to-pink-400"
+// Voice Personas with enhanced therapeutic focus
+const VOICE_PERSONAS = [
+  {
+    id: "calm_female",
+    name: "Dr. Serena",
+    title: "Mindful Therapist",
+    description: "Calm and nurturing therapeutic voice",
+    color: "from-blue-400 to-indigo-500",
+    accent: "#3B82F6",
+    avatar: "🧘‍♀️"
   },
-  "wise_male": {
-    "name": "Mindful Marcus", 
-    "description": "Deep and reassuring male voice",
-    "color": "from-blue-400 to-indigo-400"
+  {
+    id: "wise_male", 
+    name: "Dr. Marcus",
+    title: "Wise Counselor",
+    description: "Deep and reassuring therapeutic guidance",
+    color: "from-emerald-400 to-teal-500",
+    accent: "#10B981",
+    avatar: "🧘‍♂️"
   },
-  "gentle_guide": {
-    "name": "Peaceful Priya",
-    "description": "Gentle and guiding voice",
-    "color": "from-green-400 to-teal-400"
+  {
+    id: "gentle_guide",
+    name: "Dr. Priya",
+    title: "Gentle Guide",
+    description: "Compassionate and understanding voice",
+    color: "from-purple-400 to-pink-500",
+    accent: "#8B5CF6",
+    avatar: "🌸"
   },
-  "nature_spirit": {
-    "name": "Forest Finn",
-    "description": "Natural and earthy voice",
-    "color": "from-emerald-400 to-green-400"
+  {
+    id: "nature_spirit",
+    name: "Dr. Forest",
+    title: "Nature Therapist",
+    description: "Grounding and earthy therapeutic presence",
+    color: "from-green-400 to-emerald-500",
+    accent: "#059669",
+    avatar: "🌿"
   },
-  "zen_master": {
-    "name": "Tranquil Tara",
-    "description": "Wise and centered voice",
-    "color": "from-amber-400 to-orange-400"
+  {
+    id: "zen_master",
+    name: "Dr. Zen",
+    title: "Mindfulness Expert",
+    description: "Centered and peaceful guidance",
+    color: "from-amber-400 to-orange-500",
+    accent: "#F59E0B",
+    avatar: "🕉️"
   }
-};
+];
 
-// Meditation Categories
-const MEDITATION_CATEGORIES = {
-  "rainfall": {
-    "name": "Rainfall/Thunder",
-    "icon": "🌧️",
-    "description": "Soothing rain and thunder sounds"
+// Meditation sounds for therapeutic sessions
+const MEDITATION_SOUNDS = [
+  {
+    id: "nature",
+    name: "Forest Sounds",
+    description: "Peaceful forest with gentle birds",
+    icon: "🌲",
+    category: "forest"
   },
-  "ocean": {
-    "name": "Ocean Waves", 
-    "icon": "🌊",
-    "description": "Calming ocean and wave sounds"
+  {
+    id: "water",
+    name: "Ocean Waves", 
+    description: "Calming ocean waves",
+    icon: "🌊",
+    category: "ocean"
   },
-  "forest": {
-    "name": "Forest/Nature",
-    "icon": "🌲",
-    "description": "Peaceful forest and bird songs"
-  },
-  "whitenoise": {
-    "name": "White Noise",
-    "icon": "🎵",
-    "description": "Focus-enhancing ambient sounds"
-  },
-  "tibetan": {
-    "name": "Tibetan Bowls",
-    "icon": "🎎",
-    "description": "Sacred singing bowls and bells"
+  {
+    id: "rain",
+    name: "Gentle Rain",
+    description: "Soft rainfall for relaxation",
+    icon: "🌧️",
+    category: "rainfall"
   }
-};
+];
 
-// Breathing Exercise Component
-const BreathingVisualization = ({ isActive, breathingPattern }) => {
-  const [phase, setPhase] = useState('inhale'); // inhale, hold, exhale
-  const [count, setCount] = useState(0);
-  
-  useEffect(() => {
-    if (!isActive) return;
-    
-    const patterns = {
-      '4-4-6': { inhale: 4, hold: 4, exhale: 6 },
-      '4-7-8': { inhale: 4, hold: 7, exhale: 8 },
-      'box': { inhale: 4, hold: 4, exhale: 4, hold2: 4 }
-    };
-    
-    const pattern = patterns[breathingPattern] || patterns['4-4-6'];
-    
-    const timer = setInterval(() => {
-      setCount(prev => {
-        if (phase === 'inhale' && prev >= pattern.inhale) {
-          setPhase('hold');
-          return 0;
-        } else if (phase === 'hold' && prev >= pattern.hold) {
-          setPhase('exhale');
-          return 0;
-        } else if (phase === 'exhale' && prev >= pattern.exhale) {
-          setPhase('inhale');
-          return 0;
-        }
-        return prev + 1;
-      });
-    }, 1000);
-    
-    return () => clearInterval(timer);
-  }, [isActive, breathingPattern, phase]);
-  
-  const getBreathingSize = () => {
-    if (phase === 'inhale') return 'scale-150';
-    if (phase === 'hold') return 'scale-125';
-    return 'scale-100';
-  };
-  
-  const getBreathingColor = () => {
-    if (phase === 'inhale') return 'bg-blue-400';
-    if (phase === 'hold') return 'bg-purple-400';
-    return 'bg-green-400';
-  };
-  
-  return (
-    <div className="flex flex-col items-center space-y-4">
-      <motion.div 
-        className={`w-32 h-32 rounded-full ${getBreathingColor()} opacity-70 transition-all duration-1000 ${getBreathingSize()}`}
-        animate={{
-          scale: phase === 'inhale' ? 1.5 : phase === 'hold' ? 1.25 : 1,
-        }}
-        transition={{ duration: 1, ease: "easeInOut" }}
-      />
-      <div className="text-center text-white">
-        <p className="text-xl font-semibold capitalize">{phase}</p>
-        <p className="text-sm opacity-75">{count}</p>
-      </div>
-    </div>
-  );
-};
-
-// Voice Visualization Component
-const VoiceVisualization = ({ isListening, isSpeaking }) => {
-  return (
-    <div className="flex justify-center items-center space-x-2">
-      {[...Array(5)].map((_, i) => (
-        <motion.div
-          key={i}
-          className={`w-2 bg-gradient-to-t ${
-            isListening ? 'from-green-400 to-green-600' : 
-            isSpeaking ? 'from-blue-400 to-blue-600' : 
-            'from-gray-400 to-gray-600'
-          } rounded-full`}
-          animate={{
-            height: isListening || isSpeaking ? [20, 40, 20] : 20,
-          }}
-          transition={{
-            duration: 0.8,
-            repeat: isListening || isSpeaking ? Infinity : 0,
-            delay: i * 0.1,
-          }}
-        />
-      ))}
-    </div>
-  );
+// App states
+const APP_STATES = {
+  VOICE_SELECTION: 'voice_selection',
+  TIMER_SETUP: 'timer_setup', 
+  ACTIVE_SESSION: 'active_session',
+  MEDITATION_SELECTION: 'meditation_selection',
+  MEDITATION_ACTIVE: 'meditation_active'
 };
 
 function App() {
-  // State management
+  // Core state management
+  const [currentState, setCurrentState] = useState(APP_STATES.VOICE_SELECTION);
+  const [selectedPersona, setSelectedPersona] = useState(0);
+  const [sessionMinutes, setSessionMinutes] = useState(15);
   const [currentSession, setCurrentSession] = useState(null);
-  const [selectedVoice, setSelectedVoice] = useState('calm_female');
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [isSessionActive, setIsSessionActive] = useState(false);
-  const [musicTracks, setMusicTracks] = useState([]);
-  const [currentTrack, setCurrentTrack] = useState(null);
-  const [sessionDuration, setSessionDuration] = useState(60);
-  const [breathingActive, setBreathingActive] = useState(false);
-  const [breathingPattern, setBreathingPattern] = useState('4-4-6');
   const [messages, setMessages] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  
-  // Audio elements
+  const [isListening, setIsListening] = useState(false);
+  const [remainingTime, setRemainingTime] = useState(0);
+  const [selectedSound, setSelectedSound] = useState(null);
+  const [musicTracks, setMusicTracks] = useState([]);
+  const [isMeditating, setIsMeditating] = useState(false);
+  const [lastCheckIn, setLastCheckIn] = useState(null);
+
+  // Refs and audio
   const audioRef = useRef(null);
   const wsRef = useRef(null);
-  
+  const timerRef = useRef(null);
+
   // Speech recognition
   const {
     transcript,
@@ -179,92 +115,38 @@ function App() {
     resetTranscript,
     browserSupportsSpeechRecognition
   } = useSpeechRecognition();
-  
-  // Voice commands
-  const commands = [
-    {
-      command: ['start breathing', 'begin breathing exercise', 'breathing'],
-      callback: () => startBreathingExercise()
-    },
-    {
-      command: ['stop breathing', 'end breathing'],
-      callback: () => setBreathingActive(false)
-    },
-    {
-      command: ['play music', 'start music'],
-      callback: () => playSelectedMusic()
-    },
-    {
-      command: ['pause music', 'stop music'],
-      callback: () => pauseMusic()
-    },
-    {
-      command: ['end session', 'finish'],
-      callback: () => endSession()
+
+  // Voice persona navigation
+  const navigatePersona = (direction) => {
+    if (direction === 'left') {
+      setSelectedPersona(prev => prev === 0 ? VOICE_PERSONAS.length - 1 : prev - 1);
+    } else {
+      setSelectedPersona(prev => (prev + 1) % VOICE_PERSONAS.length);
     }
-  ];
-  
-  // Initialize session
-  const startSession = async () => {
+    
+    // Trigger voice introduction
+    speakIntroduction();
+  };
+
+  // Voice introduction when persona changes
+  const speakIntroduction = async () => {
+    const persona = VOICE_PERSONAS[selectedPersona];
+    const message = `Hi, I'm ${persona.name}, your ${persona.title}. We can start our conversation if you think I can help you out!`;
+    
     try {
-      setIsLoading(true);
-      
-      const response = await axios.post(`${BACKEND_URL}/api/session`, {
-        voice_persona: selectedVoice,
-        session_type: 'guided_meditation',
-        duration_minutes: sessionDuration,
-        ambient_category: selectedCategory
+      const response = await axios.post(`${BACKEND_URL}/api/generate-speech`, {
+        message,
+        voice_persona: persona.id
       });
       
-      setCurrentSession(response.data);
-      setIsSessionActive(true);
-      
-      // Initialize WebSocket connection
-      const wsUrl = `${BACKEND_URL.replace('https:', 'wss:').replace('http:', 'ws:')}/api/meditation-session/${response.data.id}`;
-      wsRef.current = new WebSocket(wsUrl);
-      
-      wsRef.current.onopen = () => {
-        console.log('WebSocket connected');
-        setMessages(prev => [...prev, { type: 'system', content: 'Connected to meditation session' }]);
-      };
-      
-      wsRef.current.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        handleWebSocketMessage(data);
-      };
-      
-      wsRef.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        setMessages(prev => [...prev, { type: 'error', content: 'Connection error' }]);
-      };
-      
-      // Start speech recognition
-      SpeechRecognition.startListening({ continuous: true });
-      
+      if (response.data.audio_data) {
+        playAudioFromBase64(response.data.audio_data);
+      }
     } catch (error) {
-      console.error('Failed to start session:', error);
-      setMessages(prev => [...prev, { type: 'error', content: 'Failed to start session' }]);
-    } finally {
-      setIsLoading(false);
+      console.error('Failed to generate speech:', error);
     }
   };
-  
-  // Handle WebSocket messages
-  const handleWebSocketMessage = (data) => {
-    console.log('Received message:', data);
-    
-    if (data.audio) {
-      // Play audio response
-      playAudioFromBase64(data.audio);
-    }
-    
-    setMessages(prev => [...prev, {
-      type: data.type || 'response',
-      content: data.message || data.response,
-      timestamp: new Date()
-    }]);
-  };
-  
+
   // Play audio from base64
   const playAudioFromBase64 = (base64Audio) => {
     try {
@@ -286,344 +168,658 @@ function App() {
       console.error('Error playing audio:', error);
     }
   };
-  
-  // Start breathing exercise
-  const startBreathingExercise = () => {
-    setBreathingActive(true);
-    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({ command: 'breathing_exercise' }));
-    }
+
+  // Timer controls
+  const adjustTimer = (change) => {
+    setSessionMinutes(prev => {
+      const newValue = prev + change;
+      return Math.max(5, Math.min(60, newValue));
+    });
   };
-  
-  // Load music for category
-  const loadMusicForCategory = async (category) => {
+
+  // Start therapy session
+  const startSession = async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}/api/music/${category}`);
-      setMusicTracks(response.data.tracks);
-      setSelectedCategory(category);
+      const persona = VOICE_PERSONAS[selectedPersona];
+      
+      const response = await axios.post(`${BACKEND_URL}/api/session`, {
+        voice_persona: persona.id,
+        session_type: 'therapy_conversation',
+        duration_minutes: sessionMinutes
+      });
+      
+      setCurrentSession(response.data);
+      setRemainingTime(sessionMinutes * 60); // Convert to seconds
+      setCurrentState(APP_STATES.ACTIVE_SESSION);
+      
+      // Start timer
+      startTimer();
+      
+      // Initialize WebSocket
+      initializeWebSocket(response.data.id);
+      
+      // Start with greeting
+      const greeting = "Hey, how's your day! Do you want to share anything with me?";
+      setMessages([{ type: 'therapist', content: greeting, timestamp: new Date() }]);
+      
+      // Generate and play greeting
+      setTimeout(() => {
+        generateTherapistResponse(greeting);
+      }, 1000);
+      
+      // Start speech recognition
+      SpeechRecognition.startListening({ continuous: true });
+      
     } catch (error) {
-      console.error('Failed to load music:', error);
+      console.error('Failed to start session:', error);
     }
   };
-  
-  // Play selected music
-  const playSelectedMusic = () => {
-    if (musicTracks.length > 0 && !currentTrack) {
-      setCurrentTrack(musicTracks[0]);
+
+  // Initialize WebSocket connection
+  const initializeWebSocket = (sessionId) => {
+    const wsUrl = `${BACKEND_URL.replace('https:', 'wss:').replace('http:', 'ws:')}/api/meditation-session/${sessionId}`;
+    wsRef.current = new WebSocket(wsUrl);
+    
+    wsRef.current.onopen = () => {
+      console.log('WebSocket connected');
+    };
+    
+    wsRef.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      handleWebSocketMessage(data);
+    };
+  };
+
+  // Handle WebSocket messages
+  const handleWebSocketMessage = (data) => {
+    if (data.audio) {
+      playAudioFromBase64(data.audio);
+    }
+    
+    if (data.type === 'meditation_suggestion') {
+      setCurrentState(APP_STATES.MEDITATION_SELECTION);
     }
   };
-  
-  // Pause music
-  const pauseMusic = () => {
-    setCurrentTrack(null);
+
+  // Generate therapist response using LLM
+  const generateTherapistResponse = async (userInput) => {
+    try {
+      const therapeuticPrompt = `You are an experienced, compassionate therapist specializing in mental health support. 
+
+Guidelines:
+1. Always respond with empathy and validation
+2. Ask open-ended questions to encourage deeper sharing
+3. If user seems stressed/anxious, offer meditation or breathing exercises
+4. Keep responses conversational and supportive (under 100 words)
+5. If you sense the user needs calming, suggest: "Would you like to try some meditation? I can play some soothing sounds."
+6. Focus on emotional well-being and mental health improvement
+7. Be a good listener and reflect what you hear
+
+Context: This is a ${sessionMinutes}-minute therapy session. User said: "${userInput}"
+
+Respond as their therapist:`;
+      
+      const response = await axios.post(`${BACKEND_URL}/api/generate-speech`, {
+        message: therapeuticPrompt,
+        voice_persona: VOICE_PERSONAS[selectedPersona].id
+      });
+      
+      // For now, we'll use a simulated response since LLM integration needs refinement
+      const responses = [
+        "I hear you. That sounds like it's been weighing on you. Can you tell me more about how that makes you feel?",
+        "Thank you for sharing that with me. It takes courage to open up. What's been your biggest challenge lately?",
+        "I can sense there's a lot going on for you right now. Sometimes it helps to just breathe and be present. Would you like to try some meditation?",
+        "Your feelings are completely valid. How has this been affecting your daily life?",
+        "I appreciate your honesty. It sounds like you're dealing with a lot. What usually helps you feel more centered?"
+      ];
+      
+      const therapeuticResponse = responses[Math.floor(Math.random() * responses.length)];
+      
+      setMessages(prev => [...prev, { 
+        type: 'therapist', 
+        content: therapeuticResponse, 
+        timestamp: new Date() 
+      }]);
+      
+      // Check if we should suggest meditation
+      if (therapeuticResponse.includes('meditation')) {
+        setTimeout(() => {
+          setCurrentState(APP_STATES.MEDITATION_SELECTION);
+        }, 3000);
+      }
+      
+    } catch (error) {
+      console.error('Failed to generate response:', error);
+    }
   };
-  
+
+  // Start meditation with selected sound
+  const startMeditation = async (sound) => {
+    setSelectedSound(sound);
+    setIsMeditating(true);
+    setCurrentState(APP_STATES.MEDITATION_ACTIVE);
+    
+    try {
+      // Load music tracks for the selected category
+      const response = await axios.get(`${BACKEND_URL}/api/music/${sound.category}`);
+      setMusicTracks(response.data.tracks);
+      
+      setMessages(prev => [...prev, { 
+        type: 'therapist', 
+        content: `Perfect choice. Let's begin with ${sound.name}. Just focus on your breathing and let the sounds wash over you.`, 
+        timestamp: new Date() 
+      }]);
+      
+      // Set check-in timer for 5 minutes
+      setLastCheckIn(Date.now());
+      
+    } catch (error) {
+      console.error('Failed to load meditation music:', error);
+    }
+  };
+
+  // Timer functionality
+  const startTimer = () => {
+    timerRef.current = setInterval(() => {
+      setRemainingTime(prev => {
+        if (prev <= 1) {
+          endSession();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  // Check-in during meditation (every 5 minutes)
+  useEffect(() => {
+    if (isMeditating && lastCheckIn) {
+      const checkInTimer = setInterval(() => {
+        const now = Date.now();
+        if (now - lastCheckIn >= 5 * 60 * 1000) { // 5 minutes
+          setMessages(prev => [...prev, { 
+            type: 'therapist', 
+            content: 'How are you feeling now? Are you finding some peace in this moment?', 
+            timestamp: new Date() 
+          }]);
+          setLastCheckIn(now);
+        }
+      }, 1000);
+      
+      return () => clearInterval(checkInTimer);
+    }
+  }, [isMeditating, lastCheckIn]);
+
+  // Handle user speech input
+  useEffect(() => {
+    if (transcript && currentState === APP_STATES.ACTIVE_SESSION) {
+      setMessages(prev => [...prev, { 
+        type: 'user', 
+        content: transcript, 
+        timestamp: new Date() 
+      }]);
+      
+      // Generate therapist response
+      generateTherapistResponse(transcript);
+      resetTranscript();
+    }
+  }, [transcript, currentState, resetTranscript]);
+
   // End session
   const endSession = () => {
-    setIsSessionActive(false);
-    setBreathingActive(false);
-    setCurrentTrack(null);
+    // Clear timers
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
     
+    // Close WebSocket
     if (wsRef.current) {
-      wsRef.current.send(JSON.stringify({ command: 'end_session' }));
       wsRef.current.close();
     }
     
+    // Stop speech recognition
     SpeechRecognition.stopListening();
-    setCurrentSession(null);
-    setMessages([]);
+    
+    // Final message
+    setMessages(prev => [...prev, { 
+      type: 'therapist', 
+      content: 'Thank you for sharing this time with me. Remember, you have the strength within you. Take care, and I hope you feel more centered now.', 
+      timestamp: new Date() 
+    }]);
+    
+    // Reset to initial state after a delay
+    setTimeout(() => {
+      setCurrentState(APP_STATES.VOICE_SELECTION);
+      setSelectedPersona(0);
+      setSessionMinutes(15);
+      setCurrentSession(null);
+      setMessages([]);
+      setRemainingTime(0);
+      setSelectedSound(null);
+      setIsMeditating(false);
+      setLastCheckIn(null);
+    }, 3000);
   };
-  
-  // Send voice input when transcript changes
-  useEffect(() => {
-    if (transcript && isSessionActive && wsRef.current) {
-      const audioBlob = new Blob([transcript], { type: 'text/plain' });
-      // In a real implementation, you'd convert the transcript to audio
-      // For now, we'll send it as text
-      console.log('User said:', transcript);
-      resetTranscript();
-    }
-  }, [transcript, isSessionActive, resetTranscript]);
-  
+
+  // Format time display
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   if (!browserSupportsSpeechRecognition) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
-        <div className="text-white text-center">
-          <h1 className="text-2xl mb-4">Browser doesn't support speech recognition.</h1>
-          <p>Please use Chrome or Edge for the full experience.</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+        <div className="text-center p-8">
+          <h1 className="text-2xl font-semibold text-gray-800 mb-4">Browser Support Required</h1>
+          <p className="text-gray-600">Please use Chrome or Edge for voice features.</p>
         </div>
       </div>
     );
   }
-  
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute top-3/4 right-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
-        <div className="absolute bottom-1/4 left-1/2 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-4000"></div>
-      </div>
-      
-      <div className="relative z-10 min-h-screen flex">
-        {/* Left Panel - Voice Agent */}
-        <div className="flex-1 flex flex-col items-center justify-center p-8">
-          <div className="glassmorphic rounded-3xl p-8 max-w-md w-full text-center">
-            {/* Voice Agent Avatar */}
-            <div className="mb-8">
-              <motion.div 
-                className={`w-32 h-32 mx-auto rounded-full bg-gradient-to-r ${VOICE_PERSONAS[selectedVoice].color} flex items-center justify-center text-4xl font-bold text-white shadow-2xl`}
-                animate={{
-                  scale: listening ? [1, 1.1, 1] : 1,
-                  boxShadow: listening ? 
-                    ['0 0 0 0 rgba(59, 130, 246, 0.7)', '0 0 0 20px rgba(59, 130, 246, 0)', '0 0 0 0 rgba(59, 130, 246, 0)'] :
-                    '0 10px 25px rgba(0, 0, 0, 0.3)'
-                }}
-                transition={{
-                  duration: listening ? 1.5 : 0.3,
-                  repeat: listening ? Infinity : 0
-                }}
-              >
-                {VOICE_PERSONAS[selectedVoice].name.split(' ').map(name => name[0]).join('')}
-              </motion.div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 relative overflow-hidden">
+      {/* Session End Button - Top Right (Only during active session) */}
+      {(currentState === APP_STATES.ACTIVE_SESSION || 
+        currentState === APP_STATES.MEDITATION_SELECTION || 
+        currentState === APP_STATES.MEDITATION_ACTIVE) && (
+        <motion.button
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          onClick={endSession}
+          className="fixed top-6 right-6 z-50 bg-white shadow-lg rounded-full p-3 hover:shadow-xl transition-all duration-300"
+        >
+          <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </motion.button>
+      )}
+
+      {/* Timer Display - Top Center (During active session) */}
+      {(currentState === APP_STATES.ACTIVE_SESSION || 
+        currentState === APP_STATES.MEDITATION_SELECTION || 
+        currentState === APP_STATES.MEDITATION_ACTIVE) && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="fixed top-6 left-1/2 transform -translate-x-1/2 z-40"
+        >
+          <div className="bg-white shadow-lg rounded-full px-6 py-3">
+            <div className="text-2xl font-bold text-gray-800">
+              {formatTime(remainingTime)}
             </div>
-            
-            <h2 className="text-2xl font-bold text-white mb-2">
-              {VOICE_PERSONAS[selectedVoice].name}
-            </h2>
-            <p className="text-purple-200 mb-6">
-              {VOICE_PERSONAS[selectedVoice].description}
-            </p>
-            
-            {/* Voice Visualization */}
-            <div className="mb-6">
-              <VoiceVisualization 
-                isListening={listening && isSessionActive}
-                isSpeaking={false}
-              />
-            </div>
-            
-            {/* Status */}
-            <div className="text-sm text-purple-200 mb-4">
-              {isSessionActive ? (
-                listening ? 'Listening...' : 'Ready to help'
-              ) : 'Ready to start'}
-            </div>
-            
-            {/* Breathing Exercise */}
-            {breathingActive && (
-              <div className="mt-6">
-                <BreathingVisualization 
-                  isActive={breathingActive}
-                  breathingPattern={breathingPattern}
-                />
-              </div>
-            )}
           </div>
-          
-          {/* Session Messages */}
-          {messages.length > 0 && (
-            <div className="mt-6 glassmorphic rounded-2xl p-4 max-w-md w-full max-h-40 overflow-y-auto">
-              {messages.slice(-3).map((message, index) => (
-                <div key={index} className={`text-sm mb-2 ${
-                  message.type === 'error' ? 'text-red-300' : 'text-white'
-                }`}>
-                  {message.content}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        
-        {/* Right Panel - Controls */}
-        <div className="w-96 p-8 space-y-6">
-          {!isSessionActive ? (
-            // Session Setup
-            <>
-              {/* Voice Selection */}
-              <div className="glassmorphic rounded-2xl p-6">
-                <h3 className="text-xl font-bold text-white mb-4">Choose Your Guide</h3>
-                <div className="space-y-3">
-                  {Object.entries(VOICE_PERSONAS).map(([key, persona]) => (
-                    <button
-                      key={key}
-                      onClick={() => setSelectedVoice(key)}
-                      className={`w-full p-3 rounded-xl text-left transition-all ${
-                        selectedVoice === key
-                          ? 'bg-white bg-opacity-20 border-2 border-white border-opacity-30'
-                          : 'bg-white bg-opacity-10 hover:bg-opacity-20'
-                      }`}
-                    >
-                      <div className="text-white font-semibold">{persona.name}</div>
-                      <div className="text-purple-200 text-sm">{persona.description}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Session Duration */}
-              <div className="glassmorphic rounded-2xl p-6">
-                <h3 className="text-xl font-bold text-white mb-4">Session Length</h3>
-                <div className="flex space-x-3">
-                  {[15, 30, 60].map(duration => (
-                    <button
-                      key={duration}
-                      onClick={() => setSessionDuration(duration)}
-                      className={`flex-1 p-3 rounded-xl transition-all ${
-                        sessionDuration === duration
-                          ? 'bg-white bg-opacity-20 border-2 border-white border-opacity-30'
-                          : 'bg-white bg-opacity-10 hover:bg-opacity-20'
-                      } text-white`}
-                    >
-                      {duration} min
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Meditation Categories */}
-              <div className="glassmorphic rounded-2xl p-6">
-                <h3 className="text-xl font-bold text-white mb-4">Ambient Sounds</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  {Object.entries(MEDITATION_CATEGORIES).map(([key, category]) => (
-                    <button
-                      key={key}
-                      onClick={() => loadMusicForCategory(key)}
-                      className={`p-4 rounded-xl text-center transition-all ${
-                        selectedCategory === key
-                          ? 'bg-white bg-opacity-20 border-2 border-white border-opacity-30'
-                          : 'bg-white bg-opacity-10 hover:bg-opacity-20'
-                      }`}
-                    >
-                      <div className="text-2xl mb-1">{category.icon}</div>
-                      <div className="text-white text-sm font-semibold">{category.name}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Start Button */}
-              <button
-                onClick={startSession}
-                disabled={isLoading}
-                className="w-full glassmorphic rounded-2xl p-6 text-white font-bold text-xl hover:bg-white hover:bg-opacity-20 transition-all disabled:opacity-50"
+        </motion.div>
+      )}
+
+      <div className="min-h-screen flex items-center justify-center p-8">
+        <AnimatePresence mode="wait">
+          {/* Voice Selection State */}
+          {currentState === APP_STATES.VOICE_SELECTION && (
+            <motion.div
+              key="voice-selection"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              transition={{ duration: 0.6 }}
+              className="text-center"
+            >
+              <motion.h1 
+                className="text-4xl font-bold text-gray-800 mb-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
               >
-                {isLoading ? 'Starting...' : 'Begin Meditation'}
-              </button>
-            </>
-          ) : (
-            // Session Controls
-            <>
-              {/* Session Info */}
-              <div className="glassmorphic rounded-2xl p-6">
-                <h3 className="text-xl font-bold text-white mb-2">Active Session</h3>
-                <div className="text-purple-200 text-sm">
-                  <p>Duration: {sessionDuration} minutes</p>
-                  <p>Guide: {VOICE_PERSONAS[selectedVoice].name}</p>
-                  {selectedCategory && (
-                    <p>Sounds: {MEDITATION_CATEGORIES[selectedCategory].name}</p>
+                Choose Your Therapist
+              </motion.h1>
+              
+              <motion.p 
+                className="text-gray-600 mb-12"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+              >
+                Select a voice that feels right for your session
+              </motion.p>
+
+              {/* Voice Persona Carousel */}
+              <div className="flex items-center justify-center space-x-8 mb-12">
+                {/* Left Arrow */}
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => navigatePersona('left')}
+                  className="p-4 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </motion.button>
+
+                {/* Current Persona */}
+                <motion.div
+                  key={selectedPersona}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-center"
+                >
+                  <motion.div
+                    className={`w-32 h-32 rounded-full bg-gradient-to-r ${VOICE_PERSONAS[selectedPersona].color} flex items-center justify-center text-4xl mb-6 shadow-2xl cursor-pointer`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setCurrentState(APP_STATES.TIMER_SETUP)}
+                  >
+                    {VOICE_PERSONAS[selectedPersona].avatar}
+                  </motion.div>
+                  
+                  <h3 className="text-2xl font-bold text-gray-800 mb-2">
+                    {VOICE_PERSONAS[selectedPersona].name}
+                  </h3>
+                  <p className="text-lg text-gray-600 mb-2">
+                    {VOICE_PERSONAS[selectedPersona].title}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {VOICE_PERSONAS[selectedPersona].description}
+                  </p>
+                </motion.div>
+
+                {/* Right Arrow */}
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => navigatePersona('right')}
+                  className="p-4 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </motion.button>
+              </div>
+
+              <motion.p 
+                className="text-sm text-gray-500"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+              >
+                Click on the therapist to continue
+              </motion.p>
+            </motion.div>
+          )}
+
+          {/* Timer Setup State */}
+          {currentState === APP_STATES.TIMER_SETUP && (
+            <motion.div
+              key="timer-setup"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.6 }}
+              className="text-center"
+            >
+              <motion.h2 
+                className="text-3xl font-bold text-gray-800 mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                Set Session Duration
+              </motion.h2>
+
+              <div className="flex items-center justify-center space-x-8 mb-12">
+                {/* Minus Button */}
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => adjustTimer(-5)}
+                  className="w-16 h-16 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                >
+                  <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M20 12H4" />
+                  </svg>
+                </motion.button>
+
+                {/* Timer Display */}
+                <motion.div
+                  className="bg-white rounded-2xl shadow-2xl p-8"
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <div className="text-6xl font-bold text-gray-800 mb-2">
+                    {sessionMinutes}
+                  </div>
+                  <div className="text-lg text-gray-600">
+                    minutes
+                  </div>
+                </motion.div>
+
+                {/* Plus Button */}
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => adjustTimer(5)}
+                  className="w-16 h-16 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                >
+                  <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
+                  </svg>
+                </motion.button>
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={startSession}
+                className={`px-12 py-4 rounded-full bg-gradient-to-r ${VOICE_PERSONAS[selectedPersona].color} text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
+                Start Session
+              </motion.button>
+            </motion.div>
+          )}
+
+          {/* Active Session State */}
+          {currentState === APP_STATES.ACTIVE_SESSION && (
+            <motion.div
+              key="active-session"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -50 }}
+              transition={{ duration: 0.6 }}
+              className="w-full max-w-4xl mx-auto"
+            >
+              {/* Therapist Avatar - Center */}
+              <div className="text-center mb-12">
+                <motion.div
+                  className={`w-24 h-24 rounded-full bg-gradient-to-r ${VOICE_PERSONAS[selectedPersona].color} flex items-center justify-center text-3xl mx-auto shadow-2xl`}
+                  animate={{
+                    scale: listening ? [1, 1.1, 1] : 1,
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: listening ? Infinity : 0
+                  }}
+                >
+                  {VOICE_PERSONAS[selectedPersona].avatar}
+                </motion.div>
+                
+                <h3 className="text-xl font-semibold text-gray-800 mt-4">
+                  {VOICE_PERSONAS[selectedPersona].name}
+                </h3>
+                
+                <div className="mt-4">
+                  {listening ? (
+                    <div className="flex justify-center space-x-1">
+                      {[...Array(4)].map((_, i) => (
+                        <motion.div
+                          key={i}
+                          className="w-1 bg-blue-500 rounded-full"
+                          animate={{
+                            height: [8, 20, 8],
+                          }}
+                          transition={{
+                            duration: 0.8,
+                            repeat: Infinity,
+                            delay: i * 0.2,
+                          }}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">Listening...</p>
                   )}
                 </div>
               </div>
-              
-              {/* Breathing Controls */}
-              <div className="glassmorphic rounded-2xl p-6">
-                <h3 className="text-xl font-bold text-white mb-4">Breathing Exercise</h3>
-                <div className="space-y-3">
-                  <div className="flex space-x-2">
-                    {['4-4-6', '4-7-8', 'box'].map(pattern => (
-                      <button
-                        key={pattern}
-                        onClick={() => setBreathingPattern(pattern)}
-                        className={`flex-1 p-2 rounded-lg text-sm transition-all ${
-                          breathingPattern === pattern
-                            ? 'bg-white bg-opacity-20'
-                            : 'bg-white bg-opacity-10 hover:bg-opacity-20'
-                        } text-white`}
-                      >
-                        {pattern}
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    onClick={() => setBreathingActive(!breathingActive)}
-                    className={`w-full p-3 rounded-xl transition-all ${
-                      breathingActive
-                        ? 'bg-red-500 bg-opacity-20 hover:bg-opacity-30'
-                        : 'bg-green-500 bg-opacity-20 hover:bg-opacity-30'
-                    } text-white`}
-                  >
-                    {breathingActive ? 'Stop Breathing' : 'Start Breathing'}
-                  </button>
+
+              {/* Conversation Messages */}
+              <div className="bg-white rounded-2xl shadow-lg p-6 max-h-96 overflow-y-auto">
+                <div className="space-y-4">
+                  {messages.map((message, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
+                        message.type === 'user' 
+                          ? 'bg-blue-500 text-white' 
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        <p className="text-sm">{message.content}</p>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
               </div>
-              
-              {/* Music Controls */}
-              {musicTracks.length > 0 && (
-                <div className="glassmorphic rounded-2xl p-6">
-                  <h3 className="text-xl font-bold text-white mb-4">Ambient Music</h3>
-                  <div className="space-y-2 max-h-40 overflow-y-auto">
-                    {musicTracks.map((track, index) => (
-                      <button
-                        key={track.id}
-                        onClick={() => setCurrentTrack(track)}
-                        className={`w-full p-3 rounded-lg text-left transition-all ${
-                          currentTrack?.id === track.id
-                            ? 'bg-white bg-opacity-20'
-                            : 'bg-white bg-opacity-10 hover:bg-opacity-20'
-                        }`}
-                      >
-                        <div className="text-white text-sm font-semibold truncate">{track.name}</div>
-                        <div className="text-purple-200 text-xs truncate">{track.artist}</div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {/* Session Controls */}
-              <div className="space-y-3">
-                <button
-                  onClick={() => {
-                    if (wsRef.current) {
-                      wsRef.current.send(JSON.stringify({ command: 'check_in' }));
-                    }
-                  }}
-                  className="w-full glassmorphic rounded-xl p-4 text-white hover:bg-white hover:bg-opacity-20 transition-all"
-                >
-                  Request Check-in
-                </button>
-                
-                <button
-                  onClick={endSession}
-                  className="w-full bg-red-500 bg-opacity-20 rounded-xl p-4 text-white hover:bg-opacity-30 transition-all"
-                >
-                  End Session
-                </button>
+
+              <div className="text-center mt-6">
+                <p className="text-sm text-gray-500">
+                  {listening ? "I'm listening..." : "Speak freely about what's on your mind"}
+                </p>
               </div>
-            </>
+            </motion.div>
           )}
-        </div>
+
+          {/* Meditation Selection State */}
+          {currentState === APP_STATES.MEDITATION_SELECTION && (
+            <motion.div
+              key="meditation-selection"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.6 }}
+              className="text-center"
+            >
+              <motion.h2 
+                className="text-3xl font-bold text-gray-800 mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                Choose Meditation Sounds
+              </motion.h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                {MEDITATION_SOUNDS.map((sound, index) => (
+                  <motion.div
+                    key={sound.id}
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.2 }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => startMeditation(sound)}
+                    className="bg-white rounded-2xl shadow-lg p-8 cursor-pointer hover:shadow-xl transition-all duration-300"
+                  >
+                    <div className="text-6xl mb-4">{sound.icon}</div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                      {sound.name}
+                    </h3>
+                    <p className="text-gray-600 text-sm">
+                      {sound.description}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                onClick={() => setCurrentState(APP_STATES.ACTIVE_SESSION)}
+                className="text-gray-500 hover:text-gray-700 transition-colors duration-300"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+              >
+                Continue without meditation
+              </motion.button>
+            </motion.div>
+          )}
+
+          {/* Meditation Active State */}
+          {currentState === APP_STATES.MEDITATION_ACTIVE && (
+            <motion.div
+              key="meditation-active"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1 }}
+              className="text-center"
+            >
+              <motion.div
+                className="w-64 h-64 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-8xl mx-auto shadow-2xl mb-8"
+                animate={{
+                  scale: [1, 1.1, 1],
+                  rotate: [0, 5, -5, 0]
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                {selectedSound?.icon}
+              </motion.div>
+
+              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                {selectedSound?.name}
+              </h2>
+
+              <p className="text-gray-600 mb-8">
+                Focus on your breathing and let the sounds guide you to peace
+              </p>
+
+              {/* Music player would go here */}
+              {musicTracks.length > 0 && musicTracks[0].preview_url && (
+                <audio
+                  src={musicTracks[0].preview_url}
+                  autoPlay
+                  loop
+                  className="hidden"
+                />
+              )}
+
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                onClick={() => setCurrentState(APP_STATES.ACTIVE_SESSION)}
+                className="text-gray-500 hover:text-gray-700 transition-colors duration-300"
+              >
+                Return to conversation
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-      
+
       {/* Audio element for playing responses */}
       <audio ref={audioRef} style={{ display: 'none' }} />
-      
-      {/* Music player */}
-      {currentTrack && currentTrack.preview_url && (
-        <div className="fixed bottom-4 left-4 glassmorphic rounded-xl p-4 max-w-sm">
-          <div className="text-white text-sm font-semibold mb-2">Now Playing</div>
-          <div className="text-purple-200 text-xs mb-2">{currentTrack.name} - {currentTrack.artist}</div>
-          <audio
-            src={currentTrack.preview_url}
-            controls
-            autoPlay
-            loop
-            className="w-full"
-            style={{ height: '30px' }}
-          />
-        </div>
-      )}
     </div>
   );
 }
