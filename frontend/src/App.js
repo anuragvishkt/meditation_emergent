@@ -437,17 +437,17 @@ Respond as their therapist:`;
         </motion.button>
       )}
 
-      {/* Timer Display - Top Center (During active session) */}
+      {/* Timer Display - Top Left (During active session) */}
       {(currentState === APP_STATES.ACTIVE_SESSION || 
         currentState === APP_STATES.MEDITATION_SELECTION || 
         currentState === APP_STATES.MEDITATION_ACTIVE) && (
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="fixed top-6 left-1/2 transform -translate-x-1/2 z-40"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="fixed top-6 left-6 z-40"
         >
-          <div className="bg-white shadow-lg rounded-full px-6 py-3">
-            <div className="text-2xl font-bold text-gray-800">
+          <div className="bg-white shadow-lg rounded-full px-6 py-3 border border-gray-100">
+            <div className="text-xl font-bold text-gray-800 tabular-nums">
               {formatTime(remainingTime)}
             </div>
           </div>
