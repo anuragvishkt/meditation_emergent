@@ -244,52 +244,67 @@ function App() {
   // Generate therapist response using LLM
   const generateTherapistResponse = async (userInput) => {
     try {
-      const therapeuticPrompt = `You are an experienced, compassionate therapist specializing in mental health support. 
-
-Guidelines:
-1. Always respond with empathy and validation
-2. Ask open-ended questions to encourage deeper sharing
-3. If user seems stressed/anxious, offer meditation or breathing exercises
-4. Keep responses conversational and supportive (under 100 words)
-5. If you sense the user needs calming, suggest: "Would you like to try some meditation? I can play some soothing sounds."
-6. Focus on emotional well-being and mental health improvement
-7. Be a good listener and reflect what you hear
-
-Context: This is a ${sessionMinutes}-minute therapy session. User said: "${userInput}"
-
-Respond as their therapist:`;
+      // Analyze user input for stress/anxiety keywords to suggest meditation
+      const stressKeywords = ['stress', 'anxious', 'worried', 'overwhelmed', 'tired', 'exhausted', 'tension', 'pressure', 'nervous', 'restless', 'cannot sleep', 'overthinking'];
+      const suggestMeditation = stressKeywords.some(keyword => userInput.toLowerCase().includes(keyword));
       
-      const response = await axios.post(`${BACKEND_URL}/api/generate-speech`, {
-        message: therapeuticPrompt,
-        voice_persona: VOICE_PERSONAS[selectedPersona].id
-      });
-      
-      // For now, we'll use a simulated response since LLM integration needs refinement
-      const responses = [
-        "I hear you. That sounds like it's been weighing on you. Can you tell me more about how that makes you feel?",
-        "Thank you for sharing that with me. It takes courage to open up. What's been your biggest challenge lately?",
-        "I can sense there's a lot going on for you right now. Sometimes it helps to just breathe and be present. Would you like to try some meditation?",
-        "Your feelings are completely valid. How has this been affecting your daily life?",
-        "I appreciate your honesty. It sounds like you're dealing with a lot. What usually helps you feel more centered?"
+      // Simulate therapeutic responses with meditation suggestions
+      const therapeuticResponses = [
+        "I hear you, and I want you to know that your feelings are completely valid. Can you tell me more about what's been weighing on your mind?",
+        "Thank you for sharing that with me. It takes courage to open up. What's been your biggest source of support during this time?",
+        "Your feelings are completely understandable. Sometimes when we're dealing with a lot, it can help to take a step back and breathe. How has this been affecting your daily routine?",
+        "I appreciate your honesty. It sounds like you're carrying a lot right now. What usually helps you feel more centered when things get overwhelming?",
+        "That sounds really challenging. You're doing the best you can with what you're facing. Have you noticed any patterns in when these feelings tend to be strongest?"
       ];
       
-      const therapeuticResponse = responses[Math.floor(Math.random() * responses.length)];
+      const meditationSuggestions = [
+        "I can sense there's a lot going on for you right now. Sometimes it helps to just pause and be present with ourselves. Would you like to try some meditation together?",
+        "It sounds like your mind has been quite busy lately. Meditation can be a wonderful way to find some peace. Shall we explore some calming sounds together?",
+        "You've been through a lot. Sometimes our minds need a gentle rest. Would you be interested in some guided meditation to help you find a moment of calm?",
+        "I hear the weight you're carrying. Meditation can be like giving your mind a warm, safe space to rest. Would you like to try some soothing sounds?"
+      ];
+      
+      let response;
+      if (suggestMeditation || Math.random() < 0.3) { // 30% chance or if stress keywords detected
+        response = meditationSuggestions[Math.floor(Math.random() * meditationSuggestions.length)];
+        
+        // Trigger meditation selection after response
+        setTimeout(() => {
+          setCurrentState(APP_STATES.MEDITATION_SELECTION);
+        }, 4000);
+      } else {
+        response = therapeuticResponses[Math.floor(Math.random() * therapeuticResponses.length)];
+      }
       
       setMessages(prev => [...prev, { 
         type: 'therapist', 
-        content: therapeuticResponse, 
+        content: response, 
         timestamp: new Date() 
       }]);
       
-      // Check if we should suggest meditation
-      if (therapeuticResponse.includes('meditation')) {
-        setTimeout(() => {
-          setCurrentState(APP_STATES.MEDITATION_SELECTION);
-        }, 3000);
+      // Generate speech if possible
+      try {
+        const speechResponse = await axios.post(`${BACKEND_URL}/api/generate-speech`, {
+          message: response,
+          voice_persona: VOICE_PERSONAS[selectedPersona].id
+        });
+        
+        if (speechResponse.data.audio_data) {
+          playAudioFromBase64(speechResponse.data.audio_data);
+        }
+      } catch (speechError) {
+        console.log('Speech synthesis not available, continuing with text only');
       }
       
     } catch (error) {
       console.error('Failed to generate response:', error);
+      const fallbackResponse = "I'm here to listen and support you. Sometimes just having someone who understands can make a difference. What would feel most helpful for you right now?";
+      
+      setMessages(prev => [...prev, { 
+        type: 'therapist', 
+        content: fallbackResponse, 
+        timestamp: new Date() 
+      }]);
     }
   };
 
