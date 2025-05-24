@@ -159,16 +159,19 @@ manager = ConnectionManager()
 
 # Helper functions
 async def generate_speech(text: str, voice_persona: str = "calm_female") -> bytes:
-    """Generate speech using Groq TTS"""
+    """Generate speech using Groq PlayAI TTS"""
     try:
         voice_config = VOICE_PERSONAS.get(voice_persona, VOICE_PERSONAS["calm_female"])
         
-        # Using Groq's audio API (simulated - adjust based on actual Groq TTS API)
+        # Using Groq's PlayAI TTS API with correct model and parameters
         response = groq_client.audio.speech.create(
-            model="tts-1",
+            model="playai-tts",
             voice=voice_config["voice_id"],
-            input=text
+            input=text,
+            response_format="wav"
         )
+        
+        # Return the audio content as bytes
         return response.content
     except Exception as e:
         logging.error(f"TTS Error: {str(e)}")
