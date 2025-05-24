@@ -159,23 +159,59 @@ manager = ConnectionManager()
 
 # Helper functions
 async def generate_speech(text: str, voice_persona: str = "calm_female") -> bytes:
-    """Generate speech using Groq PlayAI TTS"""
+    """Generate speech using available TTS services"""
     try:
         voice_config = VOICE_PERSONAS.get(voice_persona, VOICE_PERSONAS["calm_female"])
         
-        # Using Groq's PlayAI TTS API with correct model and parameters
-        response = groq_client.audio.speech.create(
-            model="playai-tts",
-            voice=voice_config["voice_id"],
-            input=text,
-            response_format="wav"
-        )
+        # Try Groq PlayAI TTS first
+        try:
+            response = groq_client.audio.speech.create(
+                model="playai-tts",
+                voice=voice_config["voice_id"],
+                input=text,
+                response_format="wav"
+            )
+            return response.content
+        except Exception as groq_error:
+            logging.warning(f"Groq TTS failed: {str(groq_error)}")
+            
+            # Try OpenAI TTS as fallback (if available)
+            try:
+                # Check if OpenAI API key is available in environment
+                openai_key = os.environ.get('OPENAI_API_KEY')
+                if openai_key:
+                    import openai
+                    openai_client = openai.OpenAI(api_key=openai_key)
+                    
+                    # Map Groq voices to OpenAI voices
+                    openai_voice_map = {
+                        "Celeste-PlayAI": "nova",
+                        "Calum-PlayAI": "onyx", 
+                        "Cheyenne-PlayAI": "shimmer",
+                        "Basil-PlayAI": "echo",
+                        "Deedee-PlayAI": "alloy"
+                    }
+                    
+                    openai_voice = openai_voice_map.get(voice_config["voice_id"], "nova")
+                    
+                    response = openai_client.audio.speech.create(
+                        model="tts-1",
+                        voice=openai_voice,
+                        input=text
+                    )
+                    return response.content
+                else:
+                    logging.info("OpenAI API key not available, skipping OpenAI TTS")
+                    
+            except Exception as openai_error:
+                logging.warning(f"OpenAI TTS fallback failed: {str(openai_error)}")
         
-        # Return the audio content as bytes
-        return response.content
+        # If all TTS services fail, return empty bytes (app will continue without audio)
+        logging.info("TTS services unavailable, continuing without audio")
+        return b""
+        
     except Exception as e:
         logging.error(f"TTS Error: {str(e)}")
-        # Return empty bytes if TTS fails
         return b""
 
 async def transcribe_audio(audio_data: bytes) -> str:
