@@ -1,216 +1,454 @@
-/* Glassmorphic and Animation Styles */
+/* Modern Clean Design - Inspired by Emergent.sh */
 
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* Custom glassmorphic utility */
-.glassmorphic {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-/* Enhanced glassmorphic for highlighted elements */
-.glassmorphic-highlight {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  line-height: 1.6;
+  color: #374151;
+  background: #fafafa;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Pulse animation for breathing */
-@keyframes breathe {
-  0%, 100% { transform: scale(1); opacity: 0.7; }
-  50% { transform: scale(1.2); opacity: 1; }
+/* Emoji and Icon Alignment Fixes */
+.emoji-center {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
 }
 
-.breathe-animation {
+/* Ensure proper emoji rendering across browsers */
+.emoji-fix {
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Segoe UI Symbol", "Android Emoji", "EmojiSymbols";
+  font-variant-emoji: emoji;
+  text-rendering: optimizeLegibility;
+  -webkit-font-feature-settings: "liga" on;
+  font-feature-settings: "liga" on;
+}
+
+/* Fix for emoji baseline alignment */
+.emoji-baseline {
+  vertical-align: middle;
+  line-height: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Modern shadow utilities */
+.shadow-soft {
+  box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-elevation {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-strong {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Improved flexbox centering */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-center-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Clean button styles */
+.btn-primary {
+  @apply px-6 py-3 bg-blue-600 text-white rounded-lg font-medium;
+  @apply hover:bg-blue-700 transition-all duration-200;
+  @apply focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  @apply active:transform active:scale-95;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium;
+  @apply hover:bg-gray-200 transition-all duration-200;
+  @apply focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+}
+
+.btn-ghost {
+  @apply px-4 py-2 text-gray-600 rounded-lg font-medium;
+  @apply hover:bg-gray-100 transition-all duration-200;
+  @apply focus:ring-2 focus:ring-gray-500 focus:ring-offset-2;
+}
+
+/* Modern card styles */
+.card {
+  @apply bg-white rounded-2xl shadow-soft border border-gray-100;
+  @apply transition-all duration-300;
+}
+
+.card:hover {
+  @apply shadow-elevation;
+}
+
+.card-interactive {
+  @apply cursor-pointer;
+  @apply hover:shadow-strong hover:scale-105;
+  @apply active:scale-95;
+}
+
+/* Modern form elements */
+.input-modern {
+  @apply w-full px-4 py-3 bg-white border border-gray-200 rounded-lg;
+  @apply focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  @apply transition-all duration-200;
+  @apply placeholder-gray-400;
+}
+
+/* Smooth animations */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(30px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0; 
+    transform: scale(0.9); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+/* Voice wave animation for listening state */
+.voice-wave {
+  width: 4px;
+  background: linear-gradient(180deg, #3B82F6, #1D4ED8);
+  border-radius: 2px;
+  margin: 0 2px;
+  animation: voiceWave 0.8s ease-in-out infinite;
+}
+
+.voice-wave:nth-child(2) { animation-delay: 0.1s; }
+.voice-wave:nth-child(3) { animation-delay: 0.2s; }
+.voice-wave:nth-child(4) { animation-delay: 0.3s; }
+
+@keyframes voiceWave {
+  0%, 100% { height: 8px; }
+  50% { height: 24px; }
+}
+
+/* Breathing animation for meditation */
+.breathing-orb {
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.8) 0%, rgba(29, 78, 216, 0.4) 70%, transparent 100%);
+  border-radius: 50%;
+  filter: blur(1px);
   animation: breathe 4s ease-in-out infinite;
 }
 
-/* Gradient text */
-.gradient-text {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+@keyframes breathe {
+  0%, 100% { 
+    transform: scale(1); 
+    opacity: 0.8; 
+  }
+  50% { 
+    transform: scale(1.2); 
+    opacity: 1; 
+  }
 }
 
-/* Custom scrollbar */
+/* Gradient backgrounds */
+.bg-gradient-therapeutic {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.bg-gradient-calm {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+}
+
+.bg-gradient-nature {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+/* Persona avatars with modern styling */
+.persona-avatar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.persona-avatar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.persona-avatar:hover::before {
+  transform: translateX(100%);
+}
+
+.persona-avatar:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.3);
+}
+
+/* Modern typography */
+.heading-primary {
+  @apply text-4xl md:text-5xl font-bold text-gray-900;
+  @apply leading-tight tracking-tight;
+}
+
+.heading-secondary {
+  @apply text-2xl md:text-3xl font-semibold text-gray-800;
+  @apply leading-tight;
+}
+
+.text-body {
+  @apply text-base text-gray-600 leading-relaxed;
+}
+
+.text-caption {
+  @apply text-sm text-gray-500;
+}
+
+/* Message bubbles */
+.message-bubble {
+  @apply max-w-xs lg:max-w-md px-4 py-3 rounded-2xl;
+  @apply shadow-soft;
+}
+
+.message-bubble.user {
+  @apply bg-blue-500 text-white ml-auto;
+  background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+}
+
+.message-bubble.therapist {
+  @apply bg-gray-50 text-gray-800;
+  border: 1px solid #f3f4f6;
+}
+
+/* Timer display */
+.timer-display {
+  @apply bg-white rounded-2xl shadow-strong p-8;
+  @apply border border-gray-100;
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+}
+
+.timer-digit {
+  @apply text-6xl font-bold text-gray-800;
+  font-feature-settings: 'tnum';
+  letter-spacing: -0.02em;
+}
+
+/* Modern control buttons */
+.control-button {
+  @apply w-16 h-16 rounded-full bg-white shadow-soft;
+  @apply flex items-center justify-center;
+  @apply hover:shadow-elevation transition-all duration-300;
+  @apply border border-gray-100;
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+}
+
+.control-button:hover {
+  transform: translateY(-2px);
+}
+
+.control-button:active {
+  transform: translateY(0) scale(0.95);
+}
+
+/* Loading states */
+.loading-spinner {
+  @apply w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Meditation sound cards */
+.sound-card {
+  @apply bg-white rounded-2xl shadow-soft p-8;
+  @apply border border-gray-100 cursor-pointer;
+  @apply transition-all duration-300;
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+}
+
+.sound-card:hover {
+  @apply shadow-elevation;
+  transform: translateY(-4px);
+}
+
+.sound-card:active {
+  transform: translateY(-2px) scale(0.98);
+}
+
+/* Responsive design utilities */
+@media (max-width: 768px) {
+  .persona-avatar {
+    width: 5rem;
+    height: 5rem;
+  }
+  
+  .timer-digit {
+    @apply text-4xl;
+  }
+  
+  .control-button {
+    @apply w-12 h-12;
+  }
+  
+  /* Mobile emoji adjustments */
+  .emoji-center {
+    font-size: 2.5rem !important;
+  }
+}
+
+/* Focus states for accessibility */
+.focus-ring {
+  @apply focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  @apply focus:outline-none;
+}
+
+/* Modern scrollbar */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f3f4f6;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+  background: #f3f4f6;
   border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
+  background: #d1d5db;
   border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.5);
+  background: #9ca3af;
 }
 
-/* Floating animation */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+/* Perfect centering for specific elements */
+.absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-.float-animation {
-  animation: float 3s ease-in-out infinite;
+.flex-center-important {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
-/* Voice wave animation */
-@keyframes wave {
-  0%, 100% { height: 20px; }
-  50% { height: 40px; }
+/* Text truncation utilities */
+.truncate-2-lines {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
-.wave-bar {
-  animation: wave 0.8s ease-in-out infinite;
+/* Improved spacing utilities */
+.space-between-center {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.wave-bar:nth-child(2) { animation-delay: 0.1s; }
-.wave-bar:nth-child(3) { animation-delay: 0.2s; }
-.wave-bar:nth-child(4) { animation-delay: 0.3s; }
-.wave-bar:nth-child(5) { animation-delay: 0.4s; }
-
-/* Glow effect */
-.glow {
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+.space-around-center {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
 
-.glow-blue {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-}
-
-.glow-green {
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
-}
-
-/* Shimmer effect */
-@keyframes shimmer {
-  0% { background-position: -200px 0; }
-  100% { background-position: calc(200px + 100%) 0; }
-}
-
-.shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  background-size: 200px 100%;
-  animation: shimmer 2s infinite;
-}
-
-/* Custom animation delays */
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-  animation-delay: 4s;
-}
-
-/* Responsive text sizing */
-.responsive-text {
-  font-size: clamp(1rem, 2.5vw, 1.5rem);
-}
-
-/* Enhanced focus states */
-.focus-enhanced:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.5);
-  border-color: rgba(139, 92, 246, 0.8);
-}
-
-/* Loading spinner */
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.loading-spinner {
-  animation: spin 1s linear infinite;
-}
-
-/* Meditation-specific styles */
-.meditation-orb {
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.8) 0%, rgba(59, 130, 246, 0.4) 70%, transparent 100%);
-  border-radius: 50%;
-  filter: blur(1px);
-}
-
-.breathing-indicator {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Accessibility improvements */
+/* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
-  .breathe-animation,
-  .float-animation,
-  .wave-bar,
-  .shimmer {
+  .animate-fade-in,
+  .animate-slide-up,
+  .animate-scale-in,
+  .voice-wave,
+  .breathing-orb {
     animation: none;
   }
-}
-
-/* Dark mode enhancements */
-@media (prefers-color-scheme: dark) {
-  .glassmorphic {
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  .persona-avatar,
+  .control-button,
+  .sound-card {
+    transition: none;
   }
 }
 
-/* Mobile optimizations */
-@media (max-width: 768px) {
-  .glassmorphic {
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-  }
-}
-
-/* High contrast mode support */
+/* High contrast improvements */
 @media (prefers-contrast: high) {
-  .glassmorphic {
-    background: rgba(0, 0, 0, 0.8);
-    border: 2px solid white;
+  .emoji-center {
+    filter: contrast(1.2);
   }
 }
 
-/* Custom utility classes */
-.transition-smooth {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.text-shadow {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.backdrop-blur-strong {
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-}
-
-/* Session status indicators */
-.status-active {
-  background: linear-gradient(135deg, #10b981, #059669);
-}
-
-.status-listening {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-}
-
-.status-speaking {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-}
-
-.status-idle {
-  background: linear-gradient(135deg, #6b7280, #4b5563);
+/* Print styles */
+@media print {
+  .emoji-center {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
 }
