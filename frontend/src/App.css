@@ -107,7 +107,7 @@ body {
 
 .card-interactive {
   @apply cursor-pointer;
-  @apply hover:shadow-strong hover:scale-105;
+  @apply hover:shadow-xl hover:scale-105;
   @apply active:scale-95;
 }
 
