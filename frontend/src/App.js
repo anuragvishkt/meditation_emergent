@@ -655,9 +655,9 @@ Respond as their therapist:`;
               className="w-full max-w-4xl mx-auto"
             >
               {/* Therapist Avatar - Center */}
-              <div className="text-center mb-12">
+              <div className="flex flex-col items-center justify-center mb-12">
                 <motion.div
-                  className={`w-24 h-24 rounded-full bg-gradient-to-r ${VOICE_PERSONAS[selectedPersona].color} flex items-center justify-center text-3xl mx-auto shadow-2xl`}
+                  className={`w-28 h-28 rounded-full bg-gradient-to-r ${VOICE_PERSONAS[selectedPersona].color} flex items-center justify-center text-4xl shadow-2xl relative overflow-hidden`}
                   animate={{
                     scale: listening ? [1, 1.1, 1] : 1,
                   }}
@@ -665,23 +665,39 @@ Respond as their therapist:`;
                     duration: 1.5,
                     repeat: listening ? Infinity : 0
                   }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
                 >
-                  {VOICE_PERSONAS[selectedPersona].avatar}
+                  <span 
+                    className="select-none pointer-events-none"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      lineHeight: '1',
+                      fontSize: '2.5rem'
+                    }}
+                  >
+                    {VOICE_PERSONAS[selectedPersona].avatar}
+                  </span>
                 </motion.div>
                 
-                <h3 className="text-xl font-semibold text-gray-800 mt-4">
+                <h3 className="text-xl font-semibold text-gray-800 mt-6 mb-4 text-center">
                   {VOICE_PERSONAS[selectedPersona].name}
                 </h3>
                 
-                <div className="mt-4">
+                <div className="flex flex-col items-center justify-center">
                   {listening ? (
-                    <div className="flex justify-center space-x-1">
+                    <div className="flex justify-center items-center space-x-1 mb-2">
                       {[...Array(4)].map((_, i) => (
                         <motion.div
                           key={i}
                           className="w-1 bg-blue-500 rounded-full"
                           animate={{
-                            height: [8, 20, 8],
+                            height: [8, 24, 8],
                           }}
                           transition={{
                             duration: 0.8,
@@ -692,8 +708,13 @@ Respond as their therapist:`;
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500">Listening...</p>
+                    <div className="h-6 flex items-center justify-center mb-2">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
+                    </div>
                   )}
+                  <p className="text-sm text-gray-500 text-center">
+                    {listening ? "I'm listening..." : "Speak freely about what's on your mind"}
+                  </p>
                 </div>
               </div>
 
