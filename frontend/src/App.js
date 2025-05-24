@@ -587,31 +587,33 @@ Respond as their therapist:`;
                 Set Session Duration
               </motion.h2>
 
-              <div className="flex items-center justify-center space-x-8 mb-12">
+              <div className="flex items-center justify-center space-x-12 mb-12">
                 {/* Minus Button */}
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => adjustTimer(-5)}
-                  className="w-16 h-16 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                  className="flex-shrink-0 w-20 h-20 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M20 12H4" />
                   </svg>
                 </motion.button>
 
                 {/* Timer Display */}
                 <motion.div
-                  className="bg-white rounded-2xl shadow-2xl p-8"
+                  className="flex-shrink-0 bg-white rounded-3xl shadow-2xl p-12 border border-gray-100"
                   initial={{ scale: 0.8 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <div className="text-6xl font-bold text-gray-800 mb-2">
-                    {sessionMinutes}
-                  </div>
-                  <div className="text-lg text-gray-600">
-                    minutes
+                  <div className="text-center">
+                    <div className="text-7xl font-bold text-gray-800 mb-3 tabular-nums">
+                      {sessionMinutes}
+                    </div>
+                    <div className="text-xl text-gray-600 font-medium">
+                      minutes
+                    </div>
                   </div>
                 </motion.div>
 
@@ -620,9 +622,9 @@ Respond as their therapist:`;
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => adjustTimer(5)}
-                  className="w-16 h-16 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
+                  className="flex-shrink-0 w-20 h-20 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
                   </svg>
                 </motion.button>
