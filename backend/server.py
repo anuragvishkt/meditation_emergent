@@ -68,31 +68,31 @@ class MeditationSessionCreate(BaseModel):
     duration_minutes: int = 60
     ambient_category: Optional[str] = None
 
-# Voice personas configuration
+# Voice personas configuration with correct Groq PlayAI voice IDs
 VOICE_PERSONAS = {
     "calm_female": {
         "name": "Serene Sarah",
-        "voice_id": "nova",
+        "voice_id": "Celeste-PlayAI",
         "description": "Calm and nurturing female voice"
     },
     "wise_male": {
         "name": "Mindful Marcus", 
-        "voice_id": "onyx",
+        "voice_id": "Calum-PlayAI",
         "description": "Deep and reassuring male voice"
     },
     "gentle_guide": {
         "name": "Peaceful Priya",
-        "voice_id": "alloy", 
+        "voice_id": "Cheyenne-PlayAI", 
         "description": "Gentle and guiding voice"
     },
     "nature_spirit": {
         "name": "Forest Finn",
-        "voice_id": "echo",
+        "voice_id": "Basil-PlayAI",
         "description": "Natural and earthy voice"
     },
     "zen_master": {
         "name": "Tranquil Tara",
-        "voice_id": "shimmer",
+        "voice_id": "Deedee-PlayAI",
         "description": "Wise and centered voice"
     }
 }
