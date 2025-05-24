@@ -719,7 +719,7 @@ Respond as their therapist:`;
               </div>
 
               {/* Conversation Messages */}
-              <div className="bg-white rounded-2xl shadow-lg p-6 max-h-96 overflow-y-auto">
+              <div className="bg-white rounded-2xl shadow-lg p-6 max-h-96 overflow-y-auto custom-scrollbar">
                 <div className="space-y-4">
                   {messages.map((message, index) => (
                     <motion.div
@@ -729,22 +729,16 @@ Respond as their therapist:`;
                       transition={{ delay: index * 0.1 }}
                       className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
-                      <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
+                      <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
                         message.type === 'user' 
                           ? 'bg-blue-500 text-white' 
                           : 'bg-gray-100 text-gray-800'
                       }`}>
-                        <p className="text-sm">{message.content}</p>
+                        <p className="text-sm leading-relaxed">{message.content}</p>
                       </div>
                     </motion.div>
                   ))}
                 </div>
-              </div>
-
-              <div className="text-center mt-6">
-                <p className="text-sm text-gray-500">
-                  {listening ? "I'm listening..." : "Speak freely about what's on your mind"}
-                </p>
               </div>
             </motion.div>
           )}
