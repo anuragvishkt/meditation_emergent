@@ -762,7 +762,7 @@ Respond as their therapist:`;
                 Choose Meditation Sounds
               </motion.h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-8">
                 {MEDITATION_SOUNDS.map((sound, index) => (
                   <motion.div
                     key={sound.id}
@@ -772,13 +772,25 @@ Respond as their therapist:`;
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => startMeditation(sound)}
-                    className="bg-white rounded-2xl shadow-lg p-8 cursor-pointer hover:shadow-xl transition-all duration-300"
+                    className="bg-white rounded-3xl shadow-lg p-8 cursor-pointer hover:shadow-xl transition-all duration-300 text-center border border-gray-100"
                   >
-                    <div className="text-6xl mb-4">{sound.icon}</div>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                    <div className="flex items-center justify-center mb-6">
+                      <span 
+                        className="text-7xl select-none"
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          lineHeight: '1'
+                        }}
+                      >
+                        {sound.icon}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-3">
                       {sound.name}
                     </h3>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-600 text-sm leading-relaxed">
                       {sound.description}
                     </p>
                   </motion.div>
