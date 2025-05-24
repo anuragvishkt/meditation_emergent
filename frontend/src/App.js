@@ -821,7 +821,7 @@ Respond as their therapist:`;
               className="text-center"
             >
               <motion.div
-                className="w-64 h-64 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-8xl mx-auto shadow-2xl mb-8"
+                className="w-80 h-80 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center shadow-2xl mb-8 mx-auto relative overflow-hidden"
                 animate={{
                   scale: [1, 1.1, 1],
                   rotate: [0, 5, -5, 0]
@@ -831,8 +831,23 @@ Respond as their therapist:`;
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
               >
-                {selectedSound?.icon}
+                <span 
+                  className="text-9xl select-none"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    lineHeight: '1'
+                  }}
+                >
+                  {selectedSound?.icon}
+                </span>
               </motion.div>
 
               <h2 className="text-2xl font-semibold text-gray-800 mb-4">
