@@ -485,13 +485,13 @@ Respond as their therapist:`;
               </motion.p>
 
               {/* Voice Persona Carousel */}
-              <div className="flex items-center justify-center space-x-8 mb-12">
+              <div className="flex items-center justify-center space-x-12 mb-12">
                 {/* Left Arrow */}
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => navigatePersona('left')}
-                  className="p-4 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="flex-shrink-0 p-4 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -504,26 +504,44 @@ Respond as their therapist:`;
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="text-center"
+                  className="flex-shrink-0 text-center min-w-0"
                 >
                   <motion.div
-                    className={`w-32 h-32 rounded-full bg-gradient-to-r ${VOICE_PERSONAS[selectedPersona].color} flex items-center justify-center text-4xl mb-6 shadow-2xl cursor-pointer`}
+                    className={`w-40 h-40 rounded-full bg-gradient-to-r ${VOICE_PERSONAS[selectedPersona].color} flex items-center justify-center text-5xl mb-6 shadow-2xl cursor-pointer mx-auto relative overflow-hidden`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setCurrentState(APP_STATES.TIMER_SETUP)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
                   >
-                    {VOICE_PERSONAS[selectedPersona].avatar}
+                    <span 
+                      className="select-none pointer-events-none"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        lineHeight: '1',
+                        fontSize: '3.5rem'
+                      }}
+                    >
+                      {VOICE_PERSONAS[selectedPersona].avatar}
+                    </span>
                   </motion.div>
                   
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">
-                    {VOICE_PERSONAS[selectedPersona].name}
-                  </h3>
-                  <p className="text-lg text-gray-600 mb-2">
-                    {VOICE_PERSONAS[selectedPersona].title}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {VOICE_PERSONAS[selectedPersona].description}
-                  </p>
+                  <div className="max-w-xs mx-auto">
+                    <h3 className="text-2xl font-bold text-gray-800 mb-2 truncate">
+                      {VOICE_PERSONAS[selectedPersona].name}
+                    </h3>
+                    <p className="text-lg text-gray-600 mb-2 truncate">
+                      {VOICE_PERSONAS[selectedPersona].title}
+                    </p>
+                    <p className="text-sm text-gray-500 leading-relaxed">
+                      {VOICE_PERSONAS[selectedPersona].description}
+                    </p>
+                  </div>
                 </motion.div>
 
                 {/* Right Arrow */}
@@ -531,7 +549,7 @@ Respond as their therapist:`;
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => navigatePersona('right')}
-                  className="p-4 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="flex-shrink-0 p-4 rounded-full bg-white shadow-lg hover:shadow-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
