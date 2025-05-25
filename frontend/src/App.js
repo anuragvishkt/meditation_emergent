@@ -234,7 +234,6 @@ function App() {
     };
   };
 
-  // Handle WebSocket messages
   // Handle WebSocket messages with improved speech management
   const handleWebSocketMessage = (data) => {
     console.log('Received message:', data);
