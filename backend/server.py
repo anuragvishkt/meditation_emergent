@@ -208,65 +208,42 @@ manager = ConnectionManager()
 
 # Helper functions
 async def generate_speech(text: str, voice_persona: str = "calm_female") -> bytes:
-    """Generate speech using available TTS services"""
+    """Generate speech using Groq TTS"""
     try:
         voice_config = VOICE_PERSONAS.get(voice_persona, VOICE_PERSONAS["calm_female"])
         
-        # Try Groq PlayAI TTS first
-        try:
-            response = groq_client.audio.speech.create(
-                model="playai-tts",
-                voice=voice_config["voice_id"],
-                input=text
-            )
-            # Handle Groq BinaryAPIResponse properly
-            if hasattr(response, 'content'):
-                return response.content
-            elif hasattr(response, 'response'):
-                return response.response.content
-            elif hasattr(response, 'read'):
-                return response.read()
-            else:
-                # Try to get the raw response data
-                return bytes(response)
-        except Exception as groq_error:
-            logging.warning(f"Groq TTS failed: {str(groq_error)}")
-            
-            # Try OpenAI TTS as fallback (if available)
-            try:
-                # Check if OpenAI API key is available in environment
-                openai_key = os.environ.get('OPENAI_API_KEY')
-                if openai_key:
-                    import openai
-                    openai_client = openai.OpenAI(api_key=openai_key)
-                    
-                    # Map Groq voices to OpenAI voices
-                    openai_voice_map = {
-                        "Celeste-PlayAI": "nova",
-                        "Calum-PlayAI": "onyx", 
-                        "Cheyenne-PlayAI": "shimmer",
-                        "Basil-PlayAI": "echo",
-                        "Deedee-PlayAI": "alloy"
-                    }
-                    
-                    openai_voice = openai_voice_map.get(voice_config["voice_id"], "nova")
-                    
-                    response = openai_client.audio.speech.create(
-                        model="tts-1",
-                        voice=openai_voice,
-                        input=text
-                    )
-                    return response.content
-                else:
-                    logging.info("OpenAI API key not available, skipping OpenAI TTS")
-                    
-            except Exception as openai_error:
-                logging.warning(f"OpenAI TTS fallback failed: {str(openai_error)}")
+        # Using Groq's audio API (simulated - adjust based on actual Groq TTS API)
+        response = groq_client.audio.speech.create(
+            model="playai-tts",
+            voice=voice_config["voice_id"],
+            input=text
+        )
         
-        # If all TTS services fail, return empty bytes (app will continue without audio)
-        logging.info("TTS services unavailable, continuing without audio")
-        return b""
+        # Method 1: Iterate over the response to collect all bytes
+        if hasattr(response, '__iter__'):
+            audio_bytes = b""
+            for chunk in response:
+                audio_bytes += chunk
+            return audio_bytes
         
+        # Method 2: Use iter_content if available (similar to requests/openai pattern)  
+        elif hasattr(response, 'iter_content'):
+            audio_bytes = b""
+            for chunk in response.iter_content(chunk_size=1024):
+                audio_bytes += chunk
+            return audio_bytes
+        
+        # Method 3: Use content property if available
+        elif hasattr(response, 'content'):
+            return response.content
+        
+        # Method 4: Use read() method if available
+        elif hasattr(response, 'read'):
+            return response.read()
+        
+        # Method 5: Direct bytes conversion (last resort)
+        else:
+            return bytes(response)
     except Exception as e:
         logging.error(f"TTS Error: {str(e)}")
         return b""
