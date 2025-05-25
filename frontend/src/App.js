@@ -503,10 +503,10 @@ function App() {
 
   // Handle user speech input with improved interruption detection
   useEffect(() => {
-    if (transcript && currentState === APP_STATES.ACTIVE_SESSION && wsRef.current) {
+    if (transcript && currentState === APP_STATES.ACTIVE_SESSION) {
       // If AI is speaking, interrupt it immediately
       if (isSpeaking) {
-        wsRef.current.send(JSON.stringify({ command: 'start_speaking' }));
+        sendWebSocketMessage({ command: 'start_speaking' });
         setIsSpeaking(false);
       }
       
@@ -521,17 +521,17 @@ function App() {
 
   // Send speech start/stop signals to backend
   useEffect(() => {
-    if (currentState === APP_STATES.ACTIVE_SESSION && wsRef.current) {
+    if (currentState === APP_STATES.ACTIVE_SESSION) {
       if (listening) {
         // User started speaking
-        wsRef.current.send(JSON.stringify({ command: 'start_speaking' }));
+        sendWebSocketMessage({ command: 'start_speaking' });
         setIsListening(true);
         if (isSpeaking) {
           setIsSpeaking(false); // Interrupt AI speech
         }
       } else {
         // User stopped speaking
-        wsRef.current.send(JSON.stringify({ command: 'stop_speaking' }));
+        sendWebSocketMessage({ command: 'stop_speaking' });
         // Don't immediately stop listening - wait for pause detection
         setTimeout(() => {
           if (!listening) {
