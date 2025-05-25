@@ -219,7 +219,16 @@ async def generate_speech(text: str, voice_persona: str = "calm_female") -> byte
                 voice=voice_config["voice_id"],
                 input=text
             )
-            return response.content
+            # Handle Groq BinaryAPIResponse properly
+            if hasattr(response, 'content'):
+                return response.content
+            elif hasattr(response, 'response'):
+                return response.response.content
+            elif hasattr(response, 'read'):
+                return response.read()
+            else:
+                # Try to get the raw response data
+                return bytes(response)
         except Exception as groq_error:
             logging.warning(f"Groq TTS failed: {str(groq_error)}")
             
