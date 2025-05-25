@@ -499,7 +499,7 @@ async def get_meditation_music(category: str):
 # WebSocket endpoint for real-time voice interaction
 @api_router.websocket("/meditation-session/{session_id}")
 async def websocket_meditation_session(websocket: WebSocket, session_id: str):
-    """WebSocket endpoint for real-time meditation session"""
+    """WebSocket endpoint for real-time meditation session with improved speech handling"""
     await manager.connect(websocket, session_id)
     
     try:
@@ -507,75 +507,113 @@ async def websocket_meditation_session(websocket: WebSocket, session_id: str):
         welcome_message = "Welcome to your meditation session. I'm here to guide you. How are you feeling today?"
         welcome_audio = await generate_speech(welcome_message)
         
+        # Mark as speaking for welcome message
+        manager.start_speaking(session_id)
+        
         await manager.send_text(session_id, {
             "type": "speech",
             "message": welcome_message,
-            "audio": base64.b64encode(welcome_audio).decode('utf-8')
+            "audio": base64.b64encode(welcome_audio).decode('utf-8') if welcome_audio else "",
+            "speaking": True
         })
+        
+        # After welcome, start listening
+        manager.start_listening(session_id)
+        manager.stop_speaking(session_id)
         
         while True:
             # Receive audio or text data
             data = await websocket.receive()
             
             if "bytes" in data:
-                # Handle audio input
+                # Handle audio input with interruption detection
                 audio_data = data["bytes"]
+                
+                # If AI is currently speaking, interrupt it
+                if manager.speech_states.get(session_id, {}).get("is_speaking", False):
+                    manager.stop_speaking(session_id)
+                    await manager.send_text(session_id, {
+                        "type": "speech_interrupted",
+                        "message": "Speech interrupted by user"
+                    })
+                
+                # Mark as user speaking/listening
+                manager.start_listening(session_id)
+                
+                # Transcribe audio
                 transcript = await transcribe_audio(audio_data)
                 
-                if transcript:
-                    # Generate response using LLM
-                    session_context = manager.session_data.get(session_id, {})
-                    response_text = await generate_meditation_response(transcript, session_context)
-                    
-                    # Generate speech response
-                    response_audio = await generate_speech(response_text)
-                    
-                    # Send response
+                if transcript.strip():
+                    # Send immediate transcript feedback
                     await manager.send_text(session_id, {
-                        "type": "conversation",
-                        "user_input": transcript,
-                        "response": response_text,
-                        "audio": base64.b64encode(response_audio).decode('utf-8')
+                        "type": "transcript",
+                        "transcript": transcript,
+                        "timestamp": datetime.utcnow().isoformat()
                     })
                     
-                    # Update session data
-                    if session_id in manager.session_data:
-                        manager.session_data[session_id]["interaction_count"] += 1
-                        manager.session_data[session_id]["last_checkin"] = datetime.utcnow()
+                    # Handle speech with pause detection
+                    session_context = manager.session_data.get(session_id, {})
+                    await handle_user_speech_with_pause(session_id, transcript, session_context)
             
             elif "text" in data:
-                # Handle text commands
+                # Handle text commands and speech start/stop signals
                 message = json.loads(data["text"])
                 command = message.get("command")
                 
-                if command == "check_in":
-                    check_in_message = "How are you feeling right now? Are you comfortable and ready to continue?"
-                    check_in_audio = await generate_speech(check_in_message)
+                if command == "start_speaking":
+                    # User started speaking - interrupt any AI speech
+                    if manager.speech_states.get(session_id, {}).get("is_speaking", False):
+                        manager.stop_speaking(session_id)
+                    manager.start_listening(session_id)
                     
-                    await manager.send_text(session_id, {
-                        "type": "check_in",
-                        "message": check_in_message,
-                        "audio": base64.b64encode(check_in_audio).decode('utf-8')
-                    })
+                elif command == "stop_speaking":
+                    # User stopped speaking - processing will happen via pause timer
+                    pass
+                    
+                elif command == "check_in":
+                    check_in_message = "How are you feeling right now? Are you comfortable and ready to continue?"
+                    
+                    # Don't interrupt if user is speaking
+                    if not manager.is_user_speaking(session_id):
+                        manager.start_speaking(session_id)
+                        check_in_audio = await generate_speech(check_in_message)
+                        
+                        await manager.send_text(session_id, {
+                            "type": "check_in",
+                            "message": check_in_message,
+                            "audio": base64.b64encode(check_in_audio).decode('utf-8') if check_in_audio else "",
+                            "speaking": True
+                        })
+                        manager.stop_speaking(session_id)
                 
                 elif command == "breathing_exercise":
                     breathing_guide = "Let's begin a breathing exercise. Breathe in slowly for 4 counts... hold for 4... and breathe out for 6."
-                    breathing_audio = await generate_speech(breathing_guide)
                     
-                    await manager.send_text(session_id, {
-                        "type": "breathing_exercise", 
-                        "message": breathing_guide,
-                        "audio": base64.b64encode(breathing_audio).decode('utf-8')
-                    })
+                    if not manager.is_user_speaking(session_id):
+                        manager.start_speaking(session_id)
+                        breathing_audio = await generate_speech(breathing_guide)
+                        
+                        await manager.send_text(session_id, {
+                            "type": "breathing_exercise", 
+                            "message": breathing_guide,
+                            "audio": base64.b64encode(breathing_audio).decode('utf-8') if breathing_audio else "",
+                            "speaking": True
+                        })
+                        manager.stop_speaking(session_id)
                 
                 elif command == "end_session":
                     end_message = "Thank you for this meditation session. You've taken an important step in your wellness journey."
+                    
+                    # Stop any ongoing speech
+                    manager.stop_speaking(session_id)
+                    
                     end_audio = await generate_speech(end_message)
                     
                     await manager.send_text(session_id, {
                         "type": "session_end",
                         "message": end_message,
-                        "audio": base64.b64encode(end_audio).decode('utf-8')
+                        "audio": base64.b64encode(end_audio).decode('utf-8') if end_audio else "",
+                        "speaking": True
                     })
                     break
     
