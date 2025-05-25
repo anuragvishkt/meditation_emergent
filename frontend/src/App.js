@@ -219,18 +219,44 @@ function App() {
     }
   };
 
-  // Initialize WebSocket connection
+  // Initialize WebSocket connection with proper state management
   const initializeWebSocket = (sessionId) => {
     const wsUrl = `${BACKEND_URL.replace('https:', 'wss:').replace('http:', 'ws:')}/api/meditation-session/${sessionId}`;
+    console.log('Connecting to WebSocket:', wsUrl);
+    
     wsRef.current = new WebSocket(wsUrl);
     
     wsRef.current.onopen = () => {
-      console.log('WebSocket connected');
+      console.log('WebSocket connected successfully');
+      setMessages(prev => [...prev, { 
+        type: 'system', 
+        content: 'Connected to meditation session', 
+        timestamp: new Date() 
+      }]);
     };
     
     wsRef.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      handleWebSocketMessage(data);
+      try {
+        const data = JSON.parse(event.data);
+        handleWebSocketMessage(data);
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
+      }
+    };
+    
+    wsRef.current.onerror = (error) => {
+      console.error('WebSocket error:', error);
+      setMessages(prev => [...prev, { 
+        type: 'error', 
+        content: 'Connection error - continuing in text mode', 
+        timestamp: new Date() 
+      }]);
+    };
+    
+    wsRef.current.onclose = (event) => {
+      console.log('WebSocket connection closed:', event);
+      setIsSpeaking(false);
+      setIsListening(false);
     };
   };
 
