@@ -316,6 +316,96 @@ async def generate_meditation_response(user_input: str, session_context: dict) -
         logging.error(f"LLM Error: {str(e)}")
         return "Let's take a moment to breathe together. Inhale deeply... and exhale slowly."
 
+async def handle_user_speech_with_pause(session_id: str, transcript: str, speech_context: dict):
+    """Handle user speech with pause detection to reduce API calls"""
+    if session_id not in manager.speech_states:
+        return
+    
+    speech_state = manager.speech_states[session_id]
+    current_time = datetime.utcnow()
+    
+    # Update speech buffer and last speech time
+    speech_state["speech_buffer"] += " " + transcript.strip()
+    speech_state["last_speech_time"] = current_time
+    
+    # Cancel existing pause timer if any
+    if speech_state["pause_timer"]:
+        speech_state["pause_timer"].cancel()
+    
+    # Set new pause timer (2-3 seconds)
+    async def process_after_pause():
+        try:
+            await asyncio.sleep(2.5)  # Wait 2.5 seconds for pause
+            
+            # Check if user is still speaking or if speech was interrupted
+            if (speech_state["last_speech_time"] and 
+                (datetime.utcnow() - speech_state["last_speech_time"]).total_seconds() >= 2.5):
+                
+                # Process the accumulated speech
+                full_transcript = speech_state["speech_buffer"].strip()
+                if full_transcript:
+                    # Clear buffer
+                    speech_state["speech_buffer"] = ""
+                    
+                    # Generate response
+                    response_text = await generate_meditation_response(full_transcript, speech_context)
+                    
+                    # Check if user started speaking again (interrupt prevention)
+                    if not manager.is_user_speaking(session_id):
+                        # Mark as speaking and generate audio
+                        manager.start_speaking(session_id)
+                        
+                        # Create audio generation task
+                        audio_task = asyncio.create_task(
+                            generate_and_send_speech_response(session_id, response_text, full_transcript)
+                        )
+                        speech_state["current_audio_task"] = audio_task
+                        
+                        # Await audio task
+                        try:
+                            await audio_task
+                        except asyncio.CancelledError:
+                            logging.info(f"Audio generation cancelled for session {session_id}")
+                        finally:
+                            manager.stop_speaking(session_id)
+                            
+        except asyncio.CancelledError:
+            logging.info(f"Pause timer cancelled for session {session_id}")
+    
+    # Create and store the pause timer task
+    speech_state["pause_timer"] = asyncio.create_task(process_after_pause())
+
+async def generate_and_send_speech_response(session_id: str, response_text: str, user_input: str):
+    """Generate speech response and send to client"""
+    try:
+        # Generate speech response
+        response_audio = await generate_speech(response_text)
+        
+        # Send response to client
+        await manager.send_text(session_id, {
+            "type": "conversation",
+            "user_input": user_input,
+            "response": response_text,
+            "audio": base64.b64encode(response_audio).decode('utf-8') if response_audio else "",
+            "speaking": True
+        })
+        
+        # Update session data
+        if session_id in manager.session_data:
+            manager.session_data[session_id]["interaction_count"] += 1
+            manager.session_data[session_id]["last_checkin"] = datetime.utcnow()
+            
+    except Exception as e:
+        logging.error(f"Error generating speech response: {str(e)}")
+        # Send text-only response if speech fails
+        await manager.send_text(session_id, {
+            "type": "conversation",
+            "user_input": user_input,
+            "response": response_text,
+            "audio": "",
+            "speaking": False
+        })
+
 def get_spotify_client():
     """Get Spotify client for searching tracks"""
     return spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(
