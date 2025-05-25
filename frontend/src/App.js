@@ -90,18 +90,22 @@ const APP_STATES = {
 };
 
 function App() {
-  // Core state management
+  // State for speech and conversation management
   const [currentState, setCurrentState] = useState(APP_STATES.VOICE_SELECTION);
   const [selectedPersona, setSelectedPersona] = useState(0);
   const [sessionMinutes, setSessionMinutes] = useState(15);
   const [currentSession, setCurrentSession] = useState(null);
   const [messages, setMessages] = useState([]);
   const [isListening, setIsListening] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [remainingTime, setRemainingTime] = useState(0);
   const [selectedSound, setSelectedSound] = useState(null);
   const [musicTracks, setMusicTracks] = useState([]);
   const [isMeditating, setIsMeditating] = useState(false);
   const [lastCheckIn, setLastCheckIn] = useState(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const [speechBuffer, setSpeechBuffer] = useState('');
+  const [conversationHeight, setConversationHeight] = useState('auto');
 
   // Refs and audio
   const audioRef = useRef(null);
