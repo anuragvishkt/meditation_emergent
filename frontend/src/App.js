@@ -219,6 +219,23 @@ function App() {
     }
   };
 
+  // Safely send WebSocket messages
+  const sendWebSocketMessage = (message) => {
+    if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+      try {
+        wsRef.current.send(JSON.stringify(message));
+        return true;
+      } catch (error) {
+        console.error('Error sending WebSocket message:', error);
+        return false;
+      }
+    } else {
+      console.warn('WebSocket not ready. Current state:', 
+        wsRef.current ? wsRef.current.readyState : 'null');
+      return false;
+    }
+  };
+
   // Initialize WebSocket connection with proper state management
   const initializeWebSocket = (sessionId) => {
     const wsUrl = `${BACKEND_URL.replace('https:', 'wss:').replace('http:', 'ws:')}/api/meditation-session/${sessionId}`;
