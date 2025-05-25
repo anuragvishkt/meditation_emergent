@@ -854,15 +854,22 @@ function App() {
                 </div>
               </div>
 
-              {/* Conversation Messages */}
-              <div className="bg-white rounded-2xl shadow-lg p-6 max-h-96 overflow-y-auto custom-scrollbar">
+              {/* Conversation Messages with Fixed Height */}
+              <div 
+                className="bg-white rounded-2xl shadow-lg p-6 overflow-y-auto custom-scrollbar"
+                style={{ 
+                  height: '400px', // Fixed height to prevent jumping
+                  minHeight: '400px',
+                  maxHeight: '400px'
+                }}
+              >
                 <div className="space-y-4">
                   {messages.map((message, index) => (
                     <motion.div
-                      key={index}
+                      key={`${message.timestamp}-${index}`} // Stable key
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.1 }}
+                      transition={{ delay: 0 }} // No delay to prevent jumping
                       className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                       <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
@@ -874,6 +881,39 @@ function App() {
                       </div>
                     </motion.div>
                   ))}
+                  
+                  {/* Show speech buffer when user is speaking */}
+                  {isListening && speechBuffer && (
+                    <motion.div
+                      initial={{ opacity: 0.5 }}
+                      animate={{ opacity: 0.7 }}
+                      className="flex justify-end"
+                    >
+                      <div className="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl bg-blue-300 text-white border-2 border-blue-400 border-dashed">
+                        <p className="text-sm leading-relaxed italic">{speechBuffer}</p>
+                      </div>
+                    </motion.div>
+                  )}
+                  
+                  {/* Show typing indicator when AI is responding */}
+                  {isSpeaking && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex justify-start"
+                    >
+                      <div className="max-w-xs lg:max-w-md px-4 py-3 rounded-2xl bg-gray-100 text-gray-800">
+                        <div className="flex items-center space-x-1">
+                          <div className="flex space-x-1">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                            <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                          </div>
+                          <span className="text-sm text-gray-500 ml-2">responding...</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
               </div>
 
