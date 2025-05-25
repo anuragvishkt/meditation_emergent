@@ -235,13 +235,103 @@ function App() {
   };
 
   // Handle WebSocket messages
+  // Handle WebSocket messages with improved speech management
   const handleWebSocketMessage = (data) => {
-    if (data.audio) {
-      playAudioFromBase64(data.audio);
+    console.log('Received message:', data);
+    
+    // Handle different message types
+    switch(data.type) {
+      case 'speech':
+      case 'conversation':
+        if (data.speaking) {
+          setIsSpeaking(true);
+          setIsListening(false);
+        }
+        
+        if (data.audio) {
+          playAudioFromBase64(data.audio);
+        }
+        
+        // Add message to conversation without causing layout jumps
+        if (data.response || data.message) {
+          setMessages(prev => {
+            const newMessages = [...prev];
+            if (data.user_input) {
+              newMessages.push({
+                type: 'user',
+                content: data.user_input,
+                timestamp: new Date()
+              });
+            }
+            newMessages.push({
+              type: 'therapist',
+              content: data.response || data.message,
+              timestamp: new Date()
+            });
+            return newMessages;
+          });
+        }
+        break;
+        
+      case 'transcript':
+        // Show real-time transcript without adding to conversation
+        setSpeechBuffer(data.transcript);
+        setIsListening(true);
+        break;
+        
+      case 'speech_interrupted':
+        setIsSpeaking(false);
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = 0;
+        }
+        break;
+        
+      case 'check_in':
+      case 'breathing_exercise':
+        if (data.speaking) {
+          setIsSpeaking(true);
+        }
+        if (data.audio) {
+          playAudioFromBase64(data.audio);
+        }
+        setMessages(prev => [...prev, {
+          type: 'therapist',
+          content: data.message,
+          timestamp: new Date()
+        }]);
+        break;
+        
+      case 'session_end':
+        setIsSpeaking(false);
+        setIsListening(false);
+        if (data.audio) {
+          playAudioFromBase64(data.audio);
+        }
+        setMessages(prev => [...prev, {
+          type: 'therapist',
+          content: data.message,
+          timestamp: new Date()
+        }]);
+        break;
+        
+      default:
+        // Handle other message types
+        if (data.audio) {
+          playAudioFromBase64(data.audio);
+        }
+        if (data.message) {
+          setMessages(prev => [...prev, {
+            type: data.type || 'system',
+            content: data.message,
+            timestamp: new Date()
+          }]);
+        }
     }
     
-    if (data.type === 'meditation_suggestion') {
-      setCurrentState(APP_STATES.MEDITATION_SELECTION);
+    // Clear speech buffer when response is received
+    if (data.type === 'conversation' && data.response) {
+      setSpeechBuffer('');
     }
   };
 
