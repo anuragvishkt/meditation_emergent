@@ -458,20 +458,48 @@ function App() {
     }
   }, [isMeditating, lastCheckIn]);
 
-  // Handle user speech input
+  // Handle user speech input with improved interruption detection
   useEffect(() => {
-    if (transcript && currentState === APP_STATES.ACTIVE_SESSION) {
-      setMessages(prev => [...prev, { 
-        type: 'user', 
-        content: transcript, 
-        timestamp: new Date() 
-      }]);
+    if (transcript && currentState === APP_STATES.ACTIVE_SESSION && wsRef.current) {
+      // If AI is speaking, interrupt it immediately
+      if (isSpeaking) {
+        wsRef.current.send(JSON.stringify({ command: 'start_speaking' }));
+        setIsSpeaking(false);
+      }
       
-      // Generate therapist response
-      generateTherapistResponse(transcript);
-      resetTranscript();
+      // Update speech buffer for real-time display
+      setSpeechBuffer(transcript);
+      setIsListening(true);
+      
+      // Don't reset transcript immediately to allow for pause detection
+      // Transcript will be reset after pause timeout
     }
-  }, [transcript, currentState, resetTranscript]);
+  }, [transcript, currentState, isSpeaking]);
+
+  // Send speech start/stop signals to backend
+  useEffect(() => {
+    if (currentState === APP_STATES.ACTIVE_SESSION && wsRef.current) {
+      if (listening) {
+        // User started speaking
+        wsRef.current.send(JSON.stringify({ command: 'start_speaking' }));
+        setIsListening(true);
+        if (isSpeaking) {
+          setIsSpeaking(false); // Interrupt AI speech
+        }
+      } else {
+        // User stopped speaking
+        wsRef.current.send(JSON.stringify({ command: 'stop_speaking' }));
+        // Don't immediately stop listening - wait for pause detection
+        setTimeout(() => {
+          if (!listening) {
+            setIsListening(false);
+            setSpeechBuffer('');
+            resetTranscript();
+          }
+        }, 3000); // Wait 3 seconds before clearing
+      }
+    }
+  }, [listening, currentState, isSpeaking, resetTranscript]);
 
   // End session
   const endSession = () => {
