@@ -168,8 +168,7 @@ async def generate_speech(text: str, voice_persona: str = "calm_female") -> byte
             response = groq_client.audio.speech.create(
                 model="playai-tts",
                 voice=voice_config["voice_id"],
-                input=text,
-                response_format="wav"
+                input=text
             )
             return response.content
         except Exception as groq_error:
