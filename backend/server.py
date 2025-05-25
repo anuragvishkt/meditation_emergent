@@ -126,11 +126,12 @@ MEDITATION_CATEGORIES = {
     }
 }
 
-# WebSocket connection manager
+# WebSocket connection manager with enhanced speech handling
 class ConnectionManager:
     def __init__(self):
         self.active_connections: Dict[str, WebSocket] = {}
         self.session_data: Dict[str, Dict] = {}
+        self.speech_states: Dict[str, Dict] = {}  # Track speech states per session
 
     async def connect(self, websocket: WebSocket, session_id: str):
         await websocket.accept()
@@ -140,12 +141,26 @@ class ConnectionManager:
             "last_checkin": datetime.utcnow(),
             "interaction_count": 0
         }
+        self.speech_states[session_id] = {
+            "is_speaking": False,
+            "is_listening": False,
+            "last_speech_time": None,
+            "speech_buffer": "",
+            "pause_timer": None,
+            "current_audio_task": None
+        }
 
     def disconnect(self, session_id: str):
         if session_id in self.active_connections:
             del self.active_connections[session_id]
         if session_id in self.session_data:
             del self.session_data[session_id]
+        if session_id in self.speech_states:
+            # Cancel any ongoing audio if user disconnects
+            speech_state = self.speech_states[session_id]
+            if speech_state["current_audio_task"]:
+                speech_state["current_audio_task"].cancel()
+            del self.speech_states[session_id]
 
     async def send_audio(self, session_id: str, audio_data: bytes):
         if session_id in self.active_connections:
@@ -154,6 +169,40 @@ class ConnectionManager:
     async def send_text(self, session_id: str, message: dict):
         if session_id in self.active_connections:
             await self.active_connections[session_id].send_text(json.dumps(message))
+
+    def start_speaking(self, session_id: str):
+        """Mark session as speaking (AI is responding)"""
+        if session_id in self.speech_states:
+            self.speech_states[session_id]["is_speaking"] = True
+            self.speech_states[session_id]["is_listening"] = False
+
+    def stop_speaking(self, session_id: str):
+        """Mark session as stopped speaking"""
+        if session_id in self.speech_states:
+            self.speech_states[session_id]["is_speaking"] = False
+            # Cancel current audio task if any
+            if self.speech_states[session_id]["current_audio_task"]:
+                self.speech_states[session_id]["current_audio_task"].cancel()
+                self.speech_states[session_id]["current_audio_task"] = None
+
+    def start_listening(self, session_id: str):
+        """Mark session as listening for user input"""
+        if session_id in self.speech_states:
+            self.speech_states[session_id]["is_listening"] = True
+            self.speech_states[session_id]["is_speaking"] = False
+
+    def is_user_speaking(self, session_id: str) -> bool:
+        """Check if user is currently speaking"""
+        if session_id in self.speech_states:
+            return self.speech_states[session_id]["is_listening"]
+        return False
+
+    def should_interrupt_speech(self, session_id: str) -> bool:
+        """Check if AI speech should be interrupted"""
+        if session_id in self.speech_states:
+            speech_state = self.speech_states[session_id]
+            return speech_state["is_speaking"] and speech_state["is_listening"]
+        return False
 
 manager = ConnectionManager()
 
